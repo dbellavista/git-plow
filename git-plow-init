@@ -1,5 +1,16 @@
 #!/usr/bin/env sh
 
+ask_global() {
+  printf "Setup global $1? [Y/n] "
+  read answer
+  name=${name:-Y}
+  if [[ "$name" == "Y" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 cmd_init() {
   if gitplow_is_initialized; then
 
@@ -11,18 +22,27 @@ cmd_init() {
     fi
     if ! gitplow_only_is_initialized; then
 
+
       DOMAIN=$(get_gitlab_domain)
       if [[ -z "$DOMAIN" ]]; then
+        local flags=''
+        if ask_global "domain"; then
+          flags="--global"
+        fi
         printf "Insert gitlab domain: "
         read answer
-        git config --type int --replace-all gitplow.gitlab.domain "$answer" || exit 1
+        git config $flags --replace-all gitplow.gitlab.domain "$answer" || exit 1
       fi
 
       PRIVATETOKEN=$(get_gitlab_token)
       if [[ -z "$PRIVATETOKEN" ]]; then
+        local flags=''
+        if ask_global "private token"; then
+          flags="--global"
+        fi
         printf "Insert gitlab api token: "
         read answer
-        git config --replace-all gitplow.gitlab.token "$answer"
+        git config $flags --replace-all gitplow.gitlab.token "$answer"
       fi
 
       PROJECTID=$(get_gitlab_prid)

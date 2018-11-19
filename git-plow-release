@@ -1,6 +1,6 @@
 #!/usr/bin/env sh
 
-cmd_hotfix() {
+cmd_release() {
 
   BRANCH=$(git rev-parse --abbrev-ref HEAD --)
   NAME=$(echo $BRANCH | sed 's/.*\///')
@@ -9,14 +9,14 @@ cmd_hotfix() {
 
   case $action in
       "start")
-          git flow hotfix start "$@"
+          git flow release start "$@"
           ;;
       "finish")
-        git flow hotfix pull $NAME
-        git flow hotfix publish $NAME
+        git flow release pull $NAME
+        git flow release publish $NAME
 
-        merge_request $BRANCH "develop" "hotfix $name" "false"
-        merge_request $BRANCH "master" "hotfix $name" "false"
+        merge_request $BRANCH "develop" "release $name" "false"
+        merge_request $BRANCH "master" "release $name" "false"
           ;;
       "complete")
         set -e
@@ -31,6 +31,7 @@ cmd_hotfix() {
         approveMasterDevelop "$NAME" "$1" "$2"
         ;;
       *)
+        echo "Unknown action $action"
         exit 1
         ;;
   esac

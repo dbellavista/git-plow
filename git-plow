@@ -76,6 +76,13 @@ main() {
       usage; exit 1
   fi
 
+  if [[ "$subcommand" != "init" ]]; then
+    if ! gitplow_is_initialized; then
+      echo "Git plow is not configured! Run git plow init to configure it"
+      return 1
+    fi
+  fi
+
   cmd_$subcommand "$@"
 }
 

@@ -2,36 +2,37 @@
 
 cmd_feature() {
 
-  PROJECTID=$(get_gitlab_prid)
-  PRIVATETOKEN=$(get_gitlab_token)
-
   BRANCH=$(git rev-parse --abbrev-ref HEAD --)
   NAME=$(echo $BRANCH | sed 's/.*\///')
 
   local action="$1"; shift
 
-  case $action; in
+  case $action in
       "start")
           git flow feature start "$@"
           ;;
       "finish")
-        PROJECTID=$1
-        PRIVATETOKEN=$2
-        BRANCH=$3
-        HOTFIXNAME=$4
         git flow feature pull $NAME
         git flow feature publish $NAME
 
-        merge_request $PROJECTID $PRIVATETOKEN $BRANCH "develop" \
-          "feature $name" "false"
+        merge_request $BRANCH "develop" "feature $name" "false"
           ;;
       "complete")
         set -e
-        echo "Pulling develop"
-        git checkout develop
-        git pull origin develop
+        pull "develop"
         echo "Deleting feature (should be merged)"
         git branch -d $BRANCH
+        ;;
+      "approve")
+        local MR_ID="$1"; shift
+        if [[ -z "$MR_ID" ]]; then
+          echo "Missing merge request id"
+          exit 1
+        fi
+        set -e
+        echo "Accepting request $MR_ID"
+        accept_request $MR_ID
+        pull "develop"
         ;;
       *)
         exit 1

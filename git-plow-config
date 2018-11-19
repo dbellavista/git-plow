@@ -1,26 +1,19 @@
 #!/usr/bin/env sh
 
 cmd_config() {
-  if gitplow_is_initialized; then
+  git flow config
 
-    git flow config
-
-    PID=$(get_gitlab_prid)
-    echo "Gitlab ProjectID: $PID"
-    if git config --get gitplow.gitlab.token > /dev/null; then
-      echo "Gitlab Token: [local]"
-    else
-      echo "Gitlab Token: [global]"
-    fi
-    DOMAIN=$(get_gitlab_domain)
-    if git config --get gitplow.gitlab.token > /dev/null; then
-      echo "Gitlab Domain: $DOMAIN [local]"
-    else
-      echo "Gitlab Domain: $DOMAIN [global]"
-    fi
-
+  PID=$(get_gitlab_prid)
+  echo "Gitlab ProjectID: $PID"
+  if git config --get gitplow.gitlab.token > /dev/null; then
+    echo "Gitlab Token: [local]"
   else
-    echo "Git plow is not configured! Run git plow init to configure it"
-    return 1
+    echo "Gitlab Token: [global]"
+  fi
+  DOMAIN=$(get_gitlab_domain)
+  if git config --get gitplow.gitlab.token > /dev/null; then
+    echo "Gitlab Domain: $DOMAIN [local]"
+  else
+    echo "Gitlab Domain: $DOMAIN [global]"
   fi
 }
