@@ -1,0 +1,45 @@
+#!/usr/bin/env sh
+
+cmd_hotfix() {
+
+  PROJECTID=$(get_gitlab_prid)
+  PRIVATETOKEN=$(get_gitlab_token)
+
+  BRANCH=$(git rev-parse --abbrev-ref HEAD --)
+  NAME=$(echo $BRANCH | sed 's/.*\///')
+
+  local action="$1"; shift
+
+  case $action; in
+      "start")
+          git flow hotfix start "$@"
+          ;;
+      "finish")
+        PROJECTID=$1
+        PRIVATETOKEN=$2
+        BRANCH=$3
+        HOTFIXNAME=$4
+        git flow hotfix pull $NAME
+        git flow hotfix publish $NAME
+
+        merge_request $PROJECTID $PRIVATETOKEN $BRANCH "develop" \
+          "hotfix $name" "false"
+        merge_request $PROJECTID $PRIVATETOKEN $BRANCH "master" \
+          "hotfix $name" "false"
+          ;;
+      "complete")
+        set -e
+        echo "Pulling master"
+        git checkout master
+        git pull origin master
+        echo "Pulling develop"
+        git checkout develop
+        git pull origin develop
+        echo "Deleting hotfix (should be merged)"
+        git branch -d $BRANCH
+        ;;
+      *)
+        exit 1
+        ;;
+  esac
+}

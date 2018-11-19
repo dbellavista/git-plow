@@ -1,0 +1,36 @@
+#!/usr/bin/env sh
+
+cmd_init() {
+  if gitplow_is_initialized; then
+
+    echo "Git Plow is already initialized"
+
+  else
+    if ! gitflow_is_initialized; then
+      git flow init
+    fi
+    if ! gitplow_only_is_initialized; then
+
+      DOMAIN=$(get_gitlab_domain)
+      if [[ -z "$DOMAIN" ]]; then
+        printf "Insert gitlab domain: "
+        read answer
+        git config --type int --replace-all gitplow.gitlab.domain "$answer" || exit 1
+      fi
+
+      PRIVATETOKEN=$(get_gitlab_token)
+      if [[ -z "$PRIVATETOKEN" ]]; then
+        printf "Insert gitlab api token: "
+        read answer
+        git config --replace-all gitplow.gitlab.token "$answer"
+      fi
+
+      PROJECTID=$(get_gitlab_prid)
+      if [[ -z "$PROJECTID" ]]; then
+        printf "Insert gitlab projectID: "
+        read answer
+        git config --type int --replace-all gitplow.gitlab.projectid "$answer" || exit 1
+      fi
+    fi
+  fi
+}

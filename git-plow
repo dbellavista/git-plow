@@ -1,0 +1,82 @@
+#!/usr/bin/env sh
+
+case $(uname -s) in
+Linux)
+	export WORKINGDIR=$(dirname "$(readlink -e "$0")")
+	;;
+FreeBSD|OpenBSD|NetBSD)
+	export FLAGS_GETOPT_CMD='/usr/local/bin/getopt'
+	export WORKINGDIR=$(dirname "$(realpath "$0")")
+	;;
+Darwin)
+	PRG="$0"
+	while [ -h "$PRG" ]; do
+		link=$(readlink "$PRG")
+		if expr "$link" : '/.*' > /dev/null; then
+			PRG="$link"
+		else
+			PRG="$(dirname "$PRG")/$link"
+		fi
+	done
+	export WORKINGDIR=$(dirname "$PRG")
+	;;
+*MINGW*)
+	export WORKINGDIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+	pwd () {
+		builtin pwd -W
+	}
+	;;
+*)
+	# The sed expression here replaces all backslashes by forward slashes.
+	# This helps our Windows users, while not bothering our Unix users.)
+	export WORKINGDIR=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+	;;
+esac
+
+version() {
+    echo "git plow plugin v0.1.0"
+    echo
+}
+
+usage() {
+    echo "usage: git plow <subcommand>"
+    echo
+    echo "Available subcommands are:"
+    echo "help"
+    echo "version"
+    echo "init"
+    echo "config"
+}
+
+main() {
+  if [ "$#" -lt 1 ]; then
+      usage; exit 1
+  fi
+
+  source "$WORKINGDIR/gitplow-commons.sh"
+
+  local subcommand="$1"; shift
+
+  case $subcommand in
+      "-h"|"--help")
+          usage; exit 0
+          ;;
+      "-v"|"--version")
+          version; exit 0
+          ;;
+  esac
+
+  if [ ! -e "$WORKINGDIR/git-plow-$subcommand" ]; then
+      usage; exit 1
+  fi
+
+  source "$WORKINGDIR/git-plow-$subcommand"
+
+  if ! type "cmd_$subcommand" > /dev/null; then
+      usage; exit 1
+  fi
+
+  cmd_$subcommand "$@"
+}
+
+main "$@"
