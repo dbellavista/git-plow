@@ -5,6 +5,18 @@
 #
 #
 
+get_gitlab_protocol() {
+  PROTOCOL=$(git config --get gitplow.gitlab.protocol)
+  if [[ -z $PROTOCOL ]]; then
+      PROTOCOL=$(git config --global --get gitplow.gitlab.protocol)
+  fi
+
+  if [[ -z $PROTOCOL ]]; then
+      return 1
+  fi
+  echo $PROTOCOL
+}
+
 get_gitlab_token() {
   PRIVATETOKEN=$(git config --get gitplow.gitlab.token)
   if [[ -z $PRIVATETOKEN ]]; then
@@ -43,6 +55,7 @@ gitflow_is_initialized() {
 
 gitplow_only_is_initialized() {
   get_gitlab_token > /dev/null \
+    && get_gitlab_protocol > /dev/null \
     && get_gitlab_prid > /dev/null \
     && get_gitlab_domain > /dev/null
 }
@@ -60,17 +73,19 @@ merge_request() {
         REMOVE="false"
     fi
 
+    PROTOCOL=$(get_gitlab_protocol)
     PROJECTID=$(get_gitlab_prid)
     PRIVATETOKEN=$(get_gitlab_token)
     DOMAIN=$(get_gitlab_domain)
 
+    echo "Title: $TITLE"
     curl --header "Private-Token: $PRIVATETOKEN"\
         -d "source_branch=$SOURCE" \
         -d "target_branch=$DEST" \
         -d "title=$TITLE" \
         -d "allow_collaboration=true" \
         -d "remove_source_branch=$REMOVE" \
-        "https://${DOMAIN}/api/v4/projects/${PROJECTID}/merge_requests"
+        "${PROTOCOL}://${DOMAIN}/api/v4/projects/${PROJECTID}/merge_requests"
 }
 
 accept_request() {
@@ -90,12 +105,11 @@ pull() {
   git pull origin $1
 }
 
-approveMasterDevelop() {
+approveMergeRequest() {
   local NAME="$1"; shift
-  local MR1_ID="$1"; shift
-  local MR2_ID="$1"; shift
-  if [[ -z "$MR1_ID" ]] || [[ -z "$MR2_ID" ]]; then
-    echo "Missing merge requests ids"
+  local MR_ID="$1"; shift
+  if [[ -z "$MR1_ID" ]]; then
+    echo "Missing merge request id"
     return 1
   fi
   set -e

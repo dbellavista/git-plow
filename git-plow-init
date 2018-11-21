@@ -34,6 +34,18 @@ cmd_init() {
         git config $flags --replace-all gitplow.gitlab.domain "$answer" || exit 1
       fi
 
+      PROTOCOL=$(get_gitlab_protocol)
+      if [[ -z "$PROTOCOL" ]]; then
+        local flags=''
+        if ask_global "protocol (https/http)"; then
+          flags="--global"
+        fi
+        printf "Insert gitlab domain [https]: "
+        read answer
+        answer=${answer:-https}
+        git config $flags --replace-all gitplow.gitlab.protocol "$answer" || exit 1
+      fi
+
       PRIVATETOKEN=$(get_gitlab_token)
       if [[ -z "$PRIVATETOKEN" ]]; then
         local flags=''

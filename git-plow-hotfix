@@ -2,7 +2,7 @@
 
 cmd_hotfix() {
 
-  BRANCH=$(git rev-parse --abbrev-ref HEAD --)
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
   NAME=$(echo $BRANCH | sed 's/.*\///')
 
   local action="$1"; shift
@@ -12,10 +12,8 @@ cmd_hotfix() {
           git flow hotfix start "$@"
           ;;
       "finish")
-        git flow hotfix pull $NAME
         git flow hotfix publish $NAME
 
-        merge_request $BRANCH "develop" "hotfix $name" "false"
         merge_request $BRANCH "master" "hotfix $name" "false"
           ;;
       "complete")
@@ -27,8 +25,14 @@ cmd_hotfix() {
         echo "Pulling tags"
         git pull --tags
         ;;
-      "approve")
-        approveMasterDevelop "$NAME" "$1" "$2"
+      "approved")
+        pull "master"
+        git tag $NAME -e
+        git push --tags
+        git checkout develop
+        git merge --no-ff $NAME
+        git push origin develop
+        git branch -d $BRANCH
         ;;
       *)
         exit 1

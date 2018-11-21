@@ -2,7 +2,7 @@
 
 cmd_release() {
 
-  BRANCH=$(git rev-parse --abbrev-ref HEAD --)
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
   NAME=$(echo $BRANCH | sed 's/.*\///')
 
   local action="$1"; shift
@@ -12,7 +12,6 @@ cmd_release() {
           git flow release start "$@"
           ;;
       "finish")
-        git flow release pull $NAME
         git flow release publish $NAME
 
         merge_request $BRANCH "develop" "release $name" "false"
@@ -27,8 +26,14 @@ cmd_release() {
         echo "Pulling tags"
         git pull --tags
         ;;
-      "approve")
-        approveMasterDevelop "$NAME" "$1" "$2"
+      "approved")
+        pull "master"
+        git tag $NAME -e
+        git push --tags
+        git checkout develop
+        git merge --no-ff $NAME
+        git push origin develop
+        git branch -d $BRANCH
         ;;
       *)
         echo "Unknown action $action"

@@ -2,7 +2,7 @@
 
 cmd_feature() {
 
-  BRANCH=$(git rev-parse --abbrev-ref HEAD --)
+  BRANCH=$(git rev-parse --abbrev-ref HEAD)
   NAME=$(echo $BRANCH | sed 's/.*\///')
 
   local action="$1"; shift
@@ -12,7 +12,6 @@ cmd_feature() {
           git flow feature start "$@"
           ;;
       "finish")
-        git flow feature pull $NAME
         git flow feature publish $NAME
 
         merge_request $BRANCH "develop" "feature $name" "false"
