@@ -11,27 +11,19 @@ cmd_feature() {
       "start")
           git flow feature start "$@"
           ;;
+      "publish")
+          git flow feature publish "$@"
+          ;;
       "finish")
         git flow feature publish $NAME
 
         merge_request $BRANCH "develop" "feature $name" "false"
           ;;
-      "complete")
+      "complete" | "approved")
         set -e
         pull "develop"
         echo "Deleting feature (should be merged)"
         git branch -d $BRANCH
-        ;;
-      "approve")
-        local MR_ID="$1"; shift
-        if [[ -z "$MR_ID" ]]; then
-          echo "Missing merge request id"
-          exit 1
-        fi
-        set -e
-        echo "Accepting request $MR_ID"
-        accept_request $MR_ID
-        pull "develop"
         ;;
       *)
         exit 1

@@ -11,6 +11,9 @@ cmd_hotfix() {
       "start")
           git flow hotfix start "$@"
           ;;
+      "publish")
+          git flow hotfix publish "$@"
+          ;;
       "finish")
         git flow hotfix publish $NAME
 

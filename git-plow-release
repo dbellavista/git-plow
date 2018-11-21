@@ -11,6 +11,9 @@ cmd_release() {
       "start")
           git flow release start "$@"
           ;;
+      "publish")
+          git flow release publish "$@"
+          ;;
       "finish")
         git flow release publish $NAME
 
