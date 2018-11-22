@@ -78,7 +78,6 @@ merge_request() {
     PRIVATETOKEN=$(get_gitlab_token)
     DOMAIN=$(get_gitlab_domain)
 
-    echo "Title: $TITLE"
     curl --header "Private-Token: $PRIVATETOKEN"\
         -d "source_branch=$SOURCE" \
         -d "target_branch=$DEST" \

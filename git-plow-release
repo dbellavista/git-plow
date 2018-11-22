@@ -17,8 +17,7 @@ cmd_release() {
       "finish")
         git flow release publish $NAME
 
-        merge_request $BRANCH "develop" "release $name" "false"
-        merge_request $BRANCH "master" "release $name" "false"
+        merge_request $BRANCH "master" "release $NAME" "false"
           ;;
       "complete")
         set -e

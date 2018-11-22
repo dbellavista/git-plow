@@ -17,7 +17,7 @@ cmd_feature() {
       "finish")
         git flow feature publish $NAME
 
-        merge_request $BRANCH "develop" "feature $name" "false"
+        merge_request $BRANCH "develop" "feature $NAME" "false"
           ;;
       "complete" | "approved")
         set -e

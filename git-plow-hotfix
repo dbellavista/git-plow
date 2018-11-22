@@ -17,7 +17,7 @@ cmd_hotfix() {
       "finish")
         git flow hotfix publish $NAME
 
-        merge_request $BRANCH "master" "hotfix $name" "false"
+        merge_request $BRANCH "master" "hotfix $NAME" "false"
           ;;
       "complete")
         set -e
