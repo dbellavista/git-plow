@@ -30,7 +30,7 @@ cmd_release() {
         ;;
       "approved")
         pull "master"
-        git tag -e $NAME
+        git tag -a $NAME
         git push --tags
         git checkout develop
         git merge --no-ff $NAME

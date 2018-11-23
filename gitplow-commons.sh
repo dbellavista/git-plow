@@ -118,6 +118,6 @@ approveMergeRequest() {
   accept_request $MR2_ID
   pull "develop"
   pull "master"
-  git tag $NAME -e
+  git tag -a $NAME
   git push --tags
 }

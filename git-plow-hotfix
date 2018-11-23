@@ -30,12 +30,13 @@ cmd_hotfix() {
         ;;
       "approved")
         pull "master"
-        git tag -e $NAME
+        git tag -a $NAME
         git push --tags
         git checkout develop
         git merge --no-ff $NAME
         git push origin develop
         git branch -d $BRANCH
+        git checkout master
         ;;
       *)
         exit 1
