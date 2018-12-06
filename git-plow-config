@@ -5,6 +5,7 @@ cmd_config() {
 
   PID=$(get_gitlab_prid)
   echo "Gitlab ProjectID: $PID"
+
   if git config --get gitplow.gitlab.token > /dev/null; then
     echo "Gitlab Token: [local]"
   else
@@ -22,4 +23,6 @@ cmd_config() {
   else
     echo "Gitlab Protocol: $PROTOCOL [global]"
   fi
+  IAMADMIN=$(i_am_admin)
+  echo "Gitlab admin status: $i_am_admin"
 }

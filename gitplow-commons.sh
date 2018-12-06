@@ -49,6 +49,14 @@ get_gitlab_prid() {
   echo $PRID
 }
 
+i_am_admin() {
+  ADMIN=$(git config --get gitplow.gitlab.admin)
+  if [[ -z $ADMIN ]]; then
+    return 1
+  fi
+  echo $ADMIN
+}
+
 gitflow_is_initialized() {
   $(git flow config >/dev/null 2>&1)
 }

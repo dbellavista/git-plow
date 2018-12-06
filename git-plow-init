@@ -4,7 +4,7 @@ ask_global() {
   printf "Setup global $1? [Y/n] "
   read answer
   name=${name:-Y}
-  if [[ "$name" == "Y" ]]; then
+  if [[ "$name" == "Y" ]] || [[ "$name" == "y" ]]; then
     return 0
   else
     return 1
@@ -62,6 +62,18 @@ cmd_init() {
         printf "Insert gitlab projectID: "
         read answer
         git config --type int --replace-all gitplow.gitlab.projectid "$answer" || exit 1
+      fi
+
+      IAMADMIN=$(i_am_admin)
+      if [[ -z "$IAMADMIN" ]]; then
+        printf "Are you a project admin? [y|N]"
+        read answer
+        answer=${answer:-N}
+        if [[ "$name" == "y" ]] || [[ "$name" == "Y" ]]; then
+          answer="false"
+        else
+          answer="true"
+        git config --type bool --replace-all gitplow.gitlab.admin "$answer" || exit 1
       fi
     fi
   fi

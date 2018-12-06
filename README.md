@@ -13,7 +13,7 @@ Git flow + gitlab merge request
 
 * git plow feature start
 * ... work
-* git plow feature finish
+* git plow feature propose
   * publish feature
   * create merge request on develop
 
@@ -23,13 +23,13 @@ Once accepted, both approved and complete commands pull develop and delete branc
 
 * git plow hotfix start
 * ... work
-* git plow hotfix finish
+* git plow hotfix propose
   * publish hotfix
   * create merge request on master
 
 The master approves the request and then
 
-* git plow hotfix approved
+* git plow hotfix finish # Must be done by masters
   * pull master
   * tag master
   * checkout develop
@@ -39,7 +39,7 @@ The master approves the request and then
 
 The developer then can
 
-* git plow hotfix complete
+* git plow hotfix finish #
   * pull master
   * pull develop
   * delete hotfix branch

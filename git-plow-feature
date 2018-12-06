@@ -4,6 +4,7 @@ cmd_feature() {
 
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
   NAME=$(echo $BRANCH | sed 's/.*\///')
+  IAMADMIN=$(i_am_admin)
 
   local action="$1"; shift
 
@@ -14,16 +15,21 @@ cmd_feature() {
       "publish")
           git flow feature publish "$@"
           ;;
-      "finish")
-        git flow feature publish $NAME
-
-        merge_request $BRANCH "develop" "feature $NAME" "false"
+      "propose")
+          git flow feature publish $NAME
+          merge_request $BRANCH "develop" "feature $NAME" "false"
           ;;
-      "complete" | "approved")
+      "finish")
         set -e
-        pull "develop"
-        echo "Deleting feature (should be merged)"
-        git branch -d $BRANCH
+        if [[ "$IAMADMIN" == "true" ]]; then
+          pull "develop"
+          echo "Deleting feature (should be merged)"
+          git branch -d $BRANCH
+        else
+          pull "develop"
+          echo "Deleting feature (should be merged)"
+          git branch -d $BRANCH
+        fi
         ;;
       *)
         exit 1

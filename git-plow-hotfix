@@ -4,6 +4,7 @@ cmd_hotfix() {
 
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
   NAME=$(echo $BRANCH | sed 's/.*\///')
+  IAMADMIN=$(i_am_admin)
 
   local action="$1"; shift
 
@@ -14,29 +15,30 @@ cmd_hotfix() {
       "publish")
           git flow hotfix publish "$@"
           ;;
-      "finish")
+      "propose")
         git flow hotfix publish $NAME
 
         merge_request $BRANCH "master" "hotfix $NAME" "false"
           ;;
-      "complete")
+      "finish")
         set -e
-        pull "master"
-        pull "develop"
-        echo "Deleting release (should be merged)"
-        git branch -d $BRANCH
-        echo "Pulling tags"
-        git pull --tags
-        ;;
-      "approved")
-        pull "master"
-        git tag -a $NAME
-        git push --tags
-        git checkout develop
-        git merge --no-ff $NAME
-        git push origin develop
-        git branch -d $BRANCH
-        git checkout master
+        if [[ "$IAMADMIN" == "true" ]]; then
+          pull "master"
+          git tag -a $NAME
+          git push --tags
+          git checkout develop
+          git merge --no-ff $NAME
+          git push origin develop
+          git branch -d $BRANCH
+          git checkout master
+        else
+          pull "master"
+          pull "develop"
+          echo "Deleting release (should be merged)"
+          git branch -d $BRANCH
+          echo "Pulling tags"
+          git pull --tags
+        fi
         ;;
       *)
         exit 1
