@@ -69,12 +69,12 @@ cmd_init() {
         printf "Are you a project admin? [y|N]"
         read answer
         answer=${answer:-N}
-        if [[ "$name" == "y" ]] || [[ "$name" == "Y" ]]; then
-          answer="false"
-        else
+        if [[ "$answer" == "y" ]] || [[ "$answer" == "Y" ]]; then
           answer="true"
-          git config --type bool --replace-all gitplow.gitlab.admin "$answer" || exit 1
+        else
+          answer="false"
         fi
+        git config --type bool --replace-all gitplow.gitlab.admin "$answer" || exit 1
       fi
     fi
   fi
