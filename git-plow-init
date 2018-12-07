@@ -73,7 +73,8 @@ cmd_init() {
           answer="false"
         else
           answer="true"
-        git config --type bool --replace-all gitplow.gitlab.admin "$answer" || exit 1
+          git config --type bool --replace-all gitplow.gitlab.admin "$answer" || exit 1
+        fi
       fi
     fi
   fi

@@ -3,7 +3,11 @@
 cmd_hotfix() {
 
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  NAME=$(echo $BRANCH | sed 's/.*\///')
+  if ! echo $BRANCH | grep --quiet -E '^hotfix/'; then
+    echo "Cannot find hotfix name in current branch $BRANCH"
+    exit 1
+  fi
+  NAME=$(echo $BRANCH | sed 's/hotfix\///')
   IAMADMIN=$(i_am_admin)
 
   local action="$1"; shift

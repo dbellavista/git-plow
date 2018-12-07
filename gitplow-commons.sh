@@ -65,7 +65,8 @@ gitplow_only_is_initialized() {
   get_gitlab_token > /dev/null \
     && get_gitlab_protocol > /dev/null \
     && get_gitlab_prid > /dev/null \
-    && get_gitlab_domain > /dev/null
+    && get_gitlab_domain > /dev/null \
+    && i_am_admin > /dev/null
 }
 
 gitplow_is_initialized() {

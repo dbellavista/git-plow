@@ -3,6 +3,10 @@
 cmd_feature() {
 
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  if ! echo $BRANCH | grep --quiet -E '^feature/'; then
+    echo "Cannot find feature name in current branch $BRANCH"
+    exit 1
+  fi
   NAME=$(echo $BRANCH | sed 's/.*\///')
   IAMADMIN=$(i_am_admin)
 
