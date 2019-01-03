@@ -2,11 +2,15 @@
 
 cmd_release() {
 
+  local action="$1"; shift
+
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  if [[ "$action" != "start" ]] && ! echo $BRANCH | grep --quiet -E '^release/'; then
+    echo "Cannot find release name in current branch $BRANCH"
+    exit 1
+  fi
   NAME=$(echo $BRANCH | sed 's/.*\///')
   IAMADMIN=$(i_am_admin)
-
-  local action="$1"; shift
 
   case $action in
       "start")

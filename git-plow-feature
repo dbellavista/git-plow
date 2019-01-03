@@ -2,15 +2,16 @@
 
 cmd_feature() {
 
+  local action="$1"; shift
+
   BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  if ! echo $BRANCH | grep --quiet -E '^feature/'; then
+  if [[ "$action" != "start" ]] && ! echo $BRANCH | grep --quiet -E '^feature/'; then
     echo "Cannot find feature name in current branch $BRANCH"
     exit 1
   fi
   NAME=$(echo $BRANCH | sed 's/.*\///')
   IAMADMIN=$(i_am_admin)
 
-  local action="$1"; shift
 
   case $action in
       "start")
