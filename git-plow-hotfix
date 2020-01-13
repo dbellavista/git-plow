@@ -36,6 +36,7 @@ cmd_hotfix() {
           git push origin develop
           git branch -d $BRANCH
           git checkout master
+          git fetch origin --prune
         else
           pull "master"
           pull "develop"

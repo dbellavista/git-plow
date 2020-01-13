@@ -30,6 +30,7 @@ cmd_feature() {
           pull "develop"
           echo "Deleting feature (should be merged)"
           git branch -d $BRANCH
+          git fetch origin --prune
         else
           pull "develop"
           echo "Deleting feature (should be merged)"
